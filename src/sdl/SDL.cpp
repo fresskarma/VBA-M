@@ -468,7 +468,7 @@ FILE *sdlFindFile(const char *name)
     if(f != NULL)
       return f;
   }
-  
+
   if(!strchr(arg0, '/') &&
      !strchr(arg0, '\\')) {
     char *path = getenv("PATH");
@@ -1142,7 +1142,7 @@ void sdlInitVideo() {
   flags = SDL_ANYFORMAT | (fullscreen ? SDL_FULLSCREEN : 0);
   if(openGL) {
     SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
-    flags |= SDL_OPENGL | SDL_RESIZABLE;
+    flags |= SDL_OPENGL | SDL_RESIZABLE | SDL_OPENGLBLIT;
   } else
     flags |= SDL_HWSURFACE | SDL_DOUBLEBUF;
 
@@ -1165,6 +1165,13 @@ void sdlInitVideo() {
   systemRedShift = sdlCalculateShift(surface->format->Rmask);
   systemGreenShift = sdlCalculateShift(surface->format->Gmask);
   systemBlueShift = sdlCalculateShift(surface->format->Bmask);
+
+  if(openGL) {
+	  // Align to BGRA instead of ABGR
+	  systemRedShift += 8;
+	  systemGreenShift += 8;
+	  systemBlueShift += 8;
+  }
 
   systemColorDepth = surface->format->BitsPerPixel;
 
@@ -2467,7 +2474,7 @@ void systemDrawScreen()
                       GL_RGB, GL_UNSIGNED_SHORT_5_6_5, screen);
     else
       glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, destWidth, destHeight,
-                      GL_BGRA, GL_UNSIGNED_BYTE, screen);
+                      GL_BGRA, GL_UNSIGNED_INT_8_8_8_8, screen);
 
     glBegin(GL_TRIANGLE_STRIP);
       glTexCoord2f(0.0f, 0.0f);
