@@ -2307,7 +2307,11 @@ int main(int argc, char **argv)
 		int	l;
 		p	= sdlPreparedCheatCodes[i];
 		l	= strlen(p);
-		if (l == 17 && p[8] == ':') {
+		if(l == 16) {
+			fprintf(stdout, "Adding GSA cheat code %s\n", p);
+			// TODO: Find out what the last parameter of cheatsAddGSACode is for!
+			cheatsAddGSACode(p, p, true);
+		} else if (l == 17 && p[8] == ':') {
 			fprintf(stdout,"Adding cheat code %s\n", p);
 			cheatsAddCheatCode(p, p);
 		} else if (l == 13 && p[8] == ' ') {
